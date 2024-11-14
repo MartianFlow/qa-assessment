@@ -32,12 +32,14 @@ jobs:
       - name: Start client server
         run: npx nx run client:serve > client.log 2>&1 &
       
-      - name: Start backend server
-        run: npx nx run server:serve > server.log 2>&1 &
-
-      - name: Esperar a que el servidor en localhost:3000 esté listo
-        run: npx wait-on http://localhost:3000 --timeout 120000
+      - name: Iniciar el servidor en segundo plano
+        run: |
+          nohup npm run start:server &> server.log &
+          sleep 15  # Agrega un pequeño retraso antes de wait-on para dar tiempo al servidor a inicializarse
       
+      - name: Esperar a que el servidor esté listo
+        run: npx wait-on http://127.0.0.1:3000 --timeout 180000 --verbose
+
       - name: Esperar a que el servidor en localhost:4200 esté listo
         run: npx wait-on http://localhost:4200 --timeout 120000
 
