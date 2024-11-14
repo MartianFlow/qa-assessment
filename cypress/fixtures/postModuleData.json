@@ -1,0 +1,14 @@
+{
+  "user": {
+    "username": "testuser",
+    "password": "testpassword"
+  },
+  "post": {
+    "title": "Test Post Title",
+    "content": "Test post content"
+  },
+  "updatePost": {
+    "newTitle": "new title",
+    "newContent": "new content"
+  }
+}
