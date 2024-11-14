@@ -1,0 +1,61 @@
+name: Cypress Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+      - staging
+  workflow_dispatch:
+
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install wait-on
+        run: npm install wait-on
+
+      - name: Start server serve
+        run: |
+            export DB_MODE="memory"
+            npx nx run server:serve &
+
+      - name: Start server serve
+        run: npx nx run client:serve &
+      
+      - name: wait client & server
+        run: |
+          sleep 20
+
+      - name: Show client server log
+        if: failure()
+        run: cat client.log
+  
+      - name: Show backend server log
+        if: failure()
+        run: cat server.log
+
+      - name: Run Cypress tests
+        run: |
+          npx cypress run --spec "cypress/e2e/**/*.cy.ts" --env DB_MODE=memory # Ruta a los archivos de prueba de Cypress
+          
+      - name: Upload Cypress Results
+        uses: actions/upload-artifact@v3
+        with:
+            name: cypress-results
+            path: mochawesome-report/
+            if-no-files-found: warn
