@@ -75,15 +75,36 @@ jobs:
           DISABLE_ERRORS_LINTERS: 'ENV_DOTENV_LINTER,JSON_ESLINT_PLUGIN_JSONC,XML_XMLLINT,ACTION_ACTIONLINT,GHERKIN_GHERKIN_LINT'
           ENABLE_LINTERS: 'TYPESCRIPT_ESLINT'
 
-  sonarcloud:
-    name: SonarQube Cloud
+  sonar:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - name: SonarQube Cloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
+          java-version: 17
+          distribution: 'zulu'
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - name: Cache Sonar
+        uses: actions/cache@v3
+        id: cache-sonar
+        with:
+          path: node_modules/.cache/sonar
+          key: source-${{ github.event.repository.name }}-${{ hashFiles('**') }}
+      - name: Run SonarCloud Analysis
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_CLOUD_TOKEN }}
+        run: |
+          npx sonar-scanner \
+            -Dsonar.projectKey=${{ inputs.project-key }} \
+            -Dsonar.organization=${{ inputs.organization }} \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.branch.name=main \
+            -Dsonar.login=${{ secrets.SONAR_CLOUD_TOKEN }} \
+            -Dsonar.sources=cypress \
+            -Dsonar.language=ts \
+            -Dsonar.exclusions=apps/**,dist/**,packages/**,lib/**,public/**,node_modules/** \
+            -Dsonar.tests=cypress/e2e
