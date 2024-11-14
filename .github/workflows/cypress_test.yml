@@ -56,7 +56,7 @@ jobs:
       - name: Copy mochawesome report to workspace
         run: |
             mkdir -p mochawesome-report
-            cp -r ../../mochawesome-report/* mochawesome-report/
+            cp -r mochawesome-report/* mochawesome-report/
         
       - name: Upload Cypress Results
         uses: actions/upload-artifact@v3
