@@ -32,20 +32,9 @@ jobs:
       - name: Start client server
         run: npx nx run client:serve > client.log 2>&1 &
       
-      - name: Iniciar el servidor en segundo plano
+      - name: wait client & server
         run: |
-          nohup npx nx run server:serve &> server.log &
-          sleep 15  # Agrega un pequeño retraso antes de wait-on para dar tiempo al servidor a inicializarse
-      
-      - name: Esperar a que el servidor esté listo
-        run: npx wait-on http://localhost:3000 --timeout 180000 --verbose
-
-      - name: Esperar a que el servidor en localhost:4200 esté listo
-        run: npx wait-on http://localhost:4200 --timeout 120000
-
-      - name: Run Cypress tests
-        run: |
-          npx cypress run --spec "cypress/e2e/**/*.cy.ts" # Ruta a los archivos de prueba de Cypress
+          sleep 20
 
       - name: Show client server log
         if: failure()
@@ -55,6 +44,9 @@ jobs:
         if: failure()
         run: cat server.log
 
+      - name: Run Cypress tests
+        run: |
+          npx cypress run --spec "cypress/e2e/**/*.cy.ts" # Ruta a los archivos de prueba de Cypress
 
       - name: Archive Cypress videos and screenshots
         if: failure()
