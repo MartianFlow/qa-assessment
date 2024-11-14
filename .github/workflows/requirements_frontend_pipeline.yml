@@ -99,7 +99,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_CLOUD_TOKEN }}
         run: |
           npx sonar-scanner \
-            -Dsonar.projectKey=${{ inputs.project-key }} \
+            -Dsonar.projectKey=MartianFlow_qa-assessment \
             -Dsonar.organization=${{ inputs.organization }} \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.branch.name=main \
