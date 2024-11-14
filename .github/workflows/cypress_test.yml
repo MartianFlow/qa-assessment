@@ -30,7 +30,20 @@ jobs:
         run: npm install wait-on
 
       - name: Start client serve
-        run: npx nx run client:serve
+        run: npx nx run client:serve > client.log 2>&1 &
+
+      - name: Esperar hasta que el servidor esté listo
+        run: |
+          TIMEOUT=120
+          until grep -q "VITE v5.4.10  ready" client.log || [ $TIMEOUT -eq 0 ]; do
+            sleep 2
+            TIMEOUT=$((TIMEOUT - 2))
+          done
+
+          if [ $TIMEOUT -eq 0 ]; then
+            echo "Error: El servidor no se inició a tiempo."
+            exit 1
+          fi
 
       - name: Esperar a que el servidor esté listo
         run: npx wait-on http://localhost:4200 --timeout 120000 --verbose
