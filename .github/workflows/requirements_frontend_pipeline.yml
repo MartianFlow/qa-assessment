@@ -102,6 +102,9 @@ jobs:
             -Dsonar.projectKey=${{ inputs.project-key }} \
             -Dsonar.organization=${{ inputs.organization }} \
             -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.branch.name=main \
             -Dsonar.login=${{ secrets.SONAR_CLOUD_TOKEN }} \
             -Dsonar.sources=cypress \
             -Dsonar.language=ts \
+            -Dsonar.exclusions=apps/**,dist/**,packages/**,lib/**,public/**,node_modules/** \
+            -Dsonar.tests=cypress/e2e
