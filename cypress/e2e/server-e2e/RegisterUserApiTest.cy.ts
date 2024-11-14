@@ -4,7 +4,7 @@
 describe('Register User Api Test', () => {
 
     it('successful user creation', () => {
-        const username = `testuser_${Math.random().toString(36).substring(7)}`;
+        const username = `testuser_${Math.random().toString(36).substring(7)}`; // NOSONAR
         cy.registerAPI(username, 'password123', true)
             .then((response) => {
                 expect(response.status).to.eq(200);
