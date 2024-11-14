@@ -12,7 +12,7 @@ Please forward any questions to [cristian@ocmiwc.com](mailto:cristian@ocmiwc.com
 
 # Proyecto de Pruebas E2E hecho con Cypress
 
-Este proyecto incluye pruebas E2E tanto para el cliente como para el servidor (APIs), implementadas en Cypress. 
+Este proyecto incluye pruebas E2E tanto para el cliente como para el servidor (APIs) implementadas en Cypress. 
 A continuación, se detalla la estructura del proyecto
 
 ## Justificación para el uso de Cypress
