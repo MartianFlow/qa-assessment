@@ -30,19 +30,28 @@ jobs:
         run: npm install wait-on
 
       - name: Start client server
-        run: npx nx run client:serve &
-
+        run: npx nx run client:serve > client.log 2>&1 &
+      
       - name: Start backend server
-        run: npx nx run server:serve &
+        run: npx nx run server:serve > server.log 2>&1 &
 
       - name: Wait for servers to be ready
         run: |
-          npx wait-on http://localhost:3000 http://localhost:4200
+          npx wait-on http://localhost:3000 http://localhost:4200 --timeout 120000
         timeout-minutes: 2
 
       - name: Run Cypress tests
         run: |
           npx cypress run --spec "cypress/e2e/**/*.cy.ts" # Ruta a los archivos de prueba de Cypress
+
+      - name: Show client server log
+        if: failure()
+        run: cat client.log
+  
+      - name: Show backend server log
+        if: failure()
+        run: cat server.log
+
 
       - name: Archive Cypress videos and screenshots
         if: failure()
