@@ -17,10 +17,15 @@ describe('Register User Api Test', () => {
                 expect(response.body.token).to.be.a('string');
                 expect(response.body.createdAt).to.be.a('string');
 
+                
                 // Tarea para eliminar el usuario creado en la prueba
-                cy.task('deleteUser', username).then((changes) => {
-                    expect(changes).to.be.greaterThan(0);
-                });
+                const inMemory = Cypress.env('DB_MODE') === 'memory';
+                console.log(inMemory);
+                if(!inMemory) {
+                    cy.task('deleteUser', username).then((changes) => {
+                        expect(changes).to.be.greaterThan(0);
+                    });
+                }
             });
     });
 

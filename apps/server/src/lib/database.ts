@@ -7,9 +7,10 @@ import { appLog, dbLog } from './logger';
 let dbInstance: Database<sqlite3.Database, sqlite3.Statement> | null = null;
 
 export const sqlite = async () => {
+  const inMemory = process.env.DB_MODE === 'memory';
   if (!dbInstance) {
     dbInstance = await open({
-      filename: ':memory:',
+      filename: inMemory ? ':memory:' : './database.sqlite',
       driver: sqlite3.Database,
     });
   }

@@ -2,7 +2,6 @@ const { defineConfig } = require("cypress");
 import sqlite3 = require('sqlite3');
 
 
-
 module.exports = defineConfig({
   e2e: {
     // Configuracion del soporte de sesión y origen experimental
@@ -33,6 +32,7 @@ module.exports = defineConfig({
     },
   },
   env: {
-    localBaseUrl: "http://localhost:3000"
+    localBaseUrl: "http://localhost:3000",
+    DB_MODE: 'disk'
   }
 });

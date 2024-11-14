@@ -30,7 +30,9 @@ jobs:
         run: npm install wait-on
 
       - name: Start server serve
-        run: npx nx run server:serve &
+        run: |
+            export DB_MODE="memory"
+            npx nx run server:serve &
 
       - name: Start server serve
         run: npx nx run client:serve &
@@ -49,7 +51,7 @@ jobs:
 
       - name: Run Cypress tests
         run: |
-          npx cypress run --spec "cypress/e2e/**/*.cy.ts" # Ruta a los archivos de prueba de Cypress
+          npx cypress run --spec "cypress/e2e/**/*.cy.ts" --env DB_MODE=memory # Ruta a los archivos de prueba de Cypress
 
       - name: Archive Cypress videos and screenshots
         if: failure()
