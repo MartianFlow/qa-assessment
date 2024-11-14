@@ -106,5 +106,4 @@ jobs:
             -Dsonar.login=${{ secrets.SONAR_CLOUD_TOKEN }} \
             -Dsonar.sources=cypress \
             -Dsonar.language=ts \
-            -Dsonar.exclusions=apps/**,dist/**,packages/**,lib/**,public/**,node_modules/**,cypress/e2e/** \
-            -Dsonar.tests=cypress/e2e
+            -Dsonar.exclusions=apps/**,dist/**,packages/**,lib/**,public/**,node_modules/** \
