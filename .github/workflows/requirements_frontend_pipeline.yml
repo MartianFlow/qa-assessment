@@ -108,3 +108,4 @@ jobs:
             -Dsonar.language=ts \
             -Dsonar.exclusions=apps/**,dist/**,packages/**,lib/**,public/**,node_modules/** \
             -Dsonar.tests=cypress/e2e
+            -Dsonar.test.exclusions=cypress/e2e/**
