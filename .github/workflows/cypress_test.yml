@@ -53,9 +53,14 @@ jobs:
         run: |
           npx cypress run --spec "cypress/e2e/**/*.cy.ts" --env DB_MODE=memory # Ruta a los archivos de prueba de Cypress
 
-      - name: Upload Cypress test results
-        if: always()
+      - name: Copy mochawesome report to workspace
+        run: |
+            mkdir -p mochawesome-report
+            cp -r ../../mochawesome-report/* mochawesome-report/
+        
+      - name: Upload Cypress Results
         uses: actions/upload-artifact@v3
         with:
-          name: cypress-results
-          path: '../../mochawesome-report'
+            name: cypress-results
+            path: mochawesome-report
+            if-no-files-found: warn
