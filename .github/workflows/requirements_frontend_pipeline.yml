@@ -39,7 +39,7 @@ jobs:
       - name: TruffleHog OSS
         uses: trufflesecurity/trufflehog@v3.67.5
         with:
-          extra_args: --debug --only-verified
+          extra_args: --only-verified
   lint:
     runs-on: ubuntu-latest
     steps:
