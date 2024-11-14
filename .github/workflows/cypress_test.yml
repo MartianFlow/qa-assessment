@@ -53,18 +53,9 @@ jobs:
         run: |
           npx cypress run --spec "cypress/e2e/**/*.cy.ts" --env DB_MODE=memory # Ruta a los archivos de prueba de Cypress
 
-      - name: Archive Cypress videos and screenshots
-        if: failure()
-        uses: actions/upload-artifact@v3
-        with:
-          name: cypress-videos-screenshots
-          path: |
-            cypress/videos
-            cypress/screenshots
-
       - name: Upload Cypress test results
         if: always()
         uses: actions/upload-artifact@v3
         with:
           name: cypress-results
-          path: cypress/results
+          path: '../../mochawesome-report'
