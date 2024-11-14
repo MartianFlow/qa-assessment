@@ -39,9 +39,6 @@ jobs:
       - name: TruffleHog OSS
         uses: trufflesecurity/trufflehog@v3.67.5
         with:
-          path: ./
-          base: ${{ github.head_ref }}
-          head: ${{ github.head_ref }}
           extra_args: --debug --only-verified
   lint:
     runs-on: ubuntu-latest
