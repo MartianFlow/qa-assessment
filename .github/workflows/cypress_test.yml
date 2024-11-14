@@ -30,10 +30,10 @@ jobs:
         run: npm install wait-on
 
       - name: Start server serve
-        run: npx nx run server:serve
+        run: npx nx run server:serve &
 
       - name: Start server serve
-        run: npx nx run client:serve
+        run: npx nx run client:serve &
       
       - name: wait client & server
         run: |
