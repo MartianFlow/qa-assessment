@@ -9,7 +9,7 @@ let dbInstance: Database<sqlite3.Database, sqlite3.Statement> | null = null;
 export const sqlite = async () => {
   if (!dbInstance) {
     dbInstance = await open({
-      filename: 'database.sqlite',
+      filename: ':memory:',
       driver: sqlite3.Database,
     });
   }
