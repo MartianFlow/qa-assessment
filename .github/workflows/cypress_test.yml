@@ -29,41 +29,11 @@ jobs:
       - name: Install wait-on
         run: npm install wait-on
 
-      - name: Arrancar servidor y esperar hasta que esté listo
-        run: |
-          # Inicia el servidor en segundo plano y redirige la salida a client.log
-          npx nx run client:serve > client.log 2>&1 &
-          
-          # Configura el tiempo de espera máximo (en segundos)
-          TIMEOUT=120
-          
-          # Monitorea en tiempo real hasta que aparezca el mensaje esperado o se agote el tiempo
-          (tail -f client.log &) | grep -q "http://localhost:4200/" &
-          TAIL_PID=$!
-          
-          while [ $TIMEOUT -gt 0 ]; do
-            if ps -p $TAIL_PID > /dev/null; then
-              echo "Esperando a que el servidor esté listo..."
-              sleep 2
-              TIMEOUT=$((TIMEOUT - 2))
-            else
-              echo "Servidor listo y corriendo"
-              break
-            fi
-          done
-      
-          # Verifica si se alcanzó el tiempo de espera
-          if [ $TIMEOUT -le 0 ]; then
-            echo "Error: El servidor no se inició a tiempo."
-            cat client.log  # Muestra el log para ver el problema
-            exit 1
-          fi
-
-      - name: Esperar a que el servidor esté listo
-        run: npx wait-on http://localhost:4200 --timeout 120000 --verbose
-
       - name: Start server serve
         run: npx nx run server:serve
+
+      - name: Start server serve
+        run: npx nx run client:serve
       
       - name: wait client & server
         run: |
