@@ -38,7 +38,7 @@ jobs:
           TIMEOUT=120
           
           # Monitorea en tiempo real hasta que aparezca el mensaje esperado o se agote el tiempo
-          (tail -f client.log &) | grep -q "➜  Local:   http://localhost:4200/" &
+          (tail -f client.log &) | grep -q "http://localhost:4200/" &
           TAIL_PID=$!
           
           while [ $TIMEOUT -gt 0 ]; do
