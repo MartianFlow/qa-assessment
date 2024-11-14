@@ -34,11 +34,11 @@ jobs:
       
       - name: Iniciar el servidor en segundo plano
         run: |
-          nohup npm run start:server &> server.log &
+          nohup npx nx run server:serve &> server.log &
           sleep 15  # Agrega un pequeño retraso antes de wait-on para dar tiempo al servidor a inicializarse
       
       - name: Esperar a que el servidor esté listo
-        run: npx wait-on http://127.0.0.1:3000 --timeout 180000 --verbose
+        run: npx wait-on http://localhost:3000 --timeout 180000 --verbose
 
       - name: Esperar a que el servidor en localhost:4200 esté listo
         run: npx wait-on http://localhost:4200 --timeout 120000
