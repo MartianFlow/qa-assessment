@@ -1,0 +1,102 @@
+name: Requirements-frontend-pipeline
+
+on:
+  workflow_call:
+    inputs:
+      project-name:
+        description: 'Project name which is gonna be the project identifier in SonarCloud'
+        required: true
+        type: string
+      project-key:
+        description: 'Project key which is gonna be the project identifier in SonarCloud'
+        required: true
+        type: string
+      organization:
+        description: 'SonarCloud organization'
+        required: false
+        default: 'martianflowdemo'
+        type: string
+      language:
+        description: 'The language used to be analyzed in SonarCloud'
+        required: true
+        type: string
+      sonar-project-properties-file:
+        description: 'File with properties to report in SonarCloud'
+        required: true
+        type: string
+
+jobs:
+  security-checks:
+    runs-on: ubuntu-latest
+    steps:
+      #Clonacion y checkeo del proyecto
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+      #Analisis de informacion sensible
+      - name: TruffleHog OSS
+        uses: trufflesecurity/trufflehog@v3.67.5
+        with:
+          path: ./
+          base: ${{ github.head_ref }}
+          head: ${{ github.head_ref }}
+          extra_args: --debug --only-verified
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Set version to download rules
+        id: version_rules
+        uses: octokit/request-action@v2.x
+        with:
+          route: GET /repos/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Checkout linter rules
+        uses: actions/checkout@v3
+        with:
+          repository: MartianFlow/qa-assessment
+          ref: ${{ fromJson(steps.version_rules.outputs.data).referenced_workflows[0].sha }}
+          token: ${{ secrets.DIG_READER_GITHUB_ACCESS_TOKEN }}
+          persist-credentials: false
+          path: ./templates_linters
+          sparse-checkout: |
+            .github/linters
+      - name: Lint Code Base
+        uses: oxsecurity/megalinter@v7
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          IGNORE_GITIGNORED_FILES: true
+          GIT_AUTHORIZATION_BEARER: ${{ secrets.DIG_READER_GITHUB_ACCESS_TOKEN }}
+          LINTER_RULES_PATH: './templates_linters/.github/linters'
+          DISABLE_ERRORS_LINTERS: 'ENV_DOTENV_LINTER,JSON_ESLINT_PLUGIN_JSONC,XML_XMLLINT,ACTION_ACTIONLINT,GHERKIN_GHERKIN_LINT'
+          ENABLE_LINTERS: 'TYPESCRIPT_ESLINT'
+
+  sonar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - name: Cache Sonar
+        uses: actions/cache@v3
+        id: cache-sonar
+        with:
+          path: node_modules/.cache/sonar
+          key: source-${{ github.event.repository.name }}-${{ hashFiles('**') }}
+      - name: Run SonarCloud Analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_CLOUD_TOKEN }}
+        run: |
+          npx sonar-scanner \
+            -Dsonar.projectKey=${{ inputs.project-key }} \
+            -Dsonar.organization=${{ inputs.organization }} \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.login=${{ secrets.SONAR_CLOUD_TOKEN }} \
+            -Dsonar.sources=cypress \
+            -Dsonar.language=ts \

@@ -1,0 +1,20 @@
+name: requirements-workflow
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - staging
+      - main
+  workflow_dispatch:
+
+jobs:
+  requirements:
+    uses: ./.github/workflows/requirements_frontend_pipeline.yml
+    with:
+      project-name: ${{ github.event.repository.name }}
+      project-key: ${{ github.event.repository.name }}
+      language: typescript
+      sonar-project-properties-file: 'sonar-project-custom.properties'
+    secrets: inherit
