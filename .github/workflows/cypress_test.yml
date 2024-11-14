@@ -1,0 +1,58 @@
+name: Cypress Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+      - staging
+  workflow_dispatch:
+
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Start client server
+        run: npx nx run client:serve &
+
+      - name: Start backend server
+        run: npx nx run server:serve &
+
+      - name: Wait for servers to be ready
+        run: |
+          npx wait-on http://localhost:3000 http://localhost:4200
+        timeout-minutes: 2
+
+      - name: Run Cypress tests
+        run: |
+          npx cypress run --spec "cypress/e2e/**/*.cy.ts" # Ruta a los archivos de prueba de Cypress
+
+      - name: Archive Cypress videos and screenshots
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: cypress-videos-screenshots
+          path: |
+            cypress/videos
+            cypress/screenshots
+
+      - name: Upload Cypress test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: cypress-results
+          path: cypress/results
