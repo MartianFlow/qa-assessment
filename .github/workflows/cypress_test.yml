@@ -35,11 +35,11 @@ jobs:
       - name: Start backend server
         run: npx nx run server:serve > server.log 2>&1 &
 
-      - name: Run tests with retries
-        run: |
-          npx wait-on http://localhost:3000 http://localhost:4200
-          retry() { for i in $(seq 1 $1); do $2 && return || sleep $3; done; return 1; }
-          retry 5 "npx cypress run" 10
+      - name: Esperar a que el servidor en localhost:3000 esté listo
+        run: npx wait-on http://localhost:3000 --timeout 120000
+      
+      - name: Esperar a que el servidor en localhost:4200 esté listo
+        run: npx wait-on http://localhost:4200 --timeout 120000
 
       - name: Run Cypress tests
         run: |
