@@ -46,3 +46,7 @@ vite.config.*.timestamp*
 *.sqlite
 
 .vscode/
+cypress/screenshots/
+cypress/videos/
+mochawesome-report/
+package-lock.json
